@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-2">Dashboard</h2>
+<p class="mb-6">Brand: {{ current_user.brand or "Not set" }} | Plan: {{ current_user.plan }}</p>
+
+<h3 class="text-xl font-semibold mt-6 mb-2">AI Composer</h3>
+<form id="composeForm" class="space-y-3 max-w-2xl">
+  <div>
+    <label>What do you want to send?</label>
+    <textarea name="brief" class="border p-2 w-full" rows="3" placeholder="e.g., announce 20% off for returning customers"></textarea>
+  </div>
+  <div>
+    <label>Type</label>
+    <select name="kind" class="border p-2">
+      <option value="email">Email</option>
+      <option value="sms">SMS</option>
+    </select>
+  </div>
+  <button class="px-4 py-2 bg-black text-white rounded" type="submit">Generate</button>
+</form>
+<pre id="draft" class="bg-slate-100 p-3 my-3 whitespace-pre-wrap"></pre>
+
+<h3 class="text-xl font-semibold mt-8 mb-2">Send Email to All Contacts</h3>
+<form id="sendForm" class="space-y-3 max-w-2xl">
+  <div><label>Subject</label><input name="subject" class="border p-2 w-full"></div>
+  <div><label>Body (HTML allowed)</label><textarea name="body_html" class="border p-2 w-full" rows="6"></textarea></div>
+  <button class="px-4 py-2 bg-black text-white rounded" type="submit">Send via Brevo</button>
+</form>
+<p id="sendStatus" class="mt-2"></p>
+
+<h3 class="text-xl font-semibold mt-8 mb-2">Contacts</h3>
+<form id="addContact" class="space-y-3 max-w-xl">
+  <div><label>Name</label><input name="name" class="border p-2 w-full"></div>
+  <div><label>Email</label><input name="email" class="border p-2 w-full" required></div>
+  <div><label>Company</label><input name="company" class="border p-2 w-full"></div>
+  <button class="px-4 py-2 border rounded" type="submit">Add Contact</button>
+</form>
+
+<ul class="mt-4">
+  {% for c in contacts %}
+    <li class="border-b py-2">{{ c.name }} — {{ c.email }} — {{ c.company }}</li>
+  {% else %}
+    <li>No contacts yet.</li>
+  {% endfor %}
+</ul>
+
+<script>
+const composeForm = document.getElementById('composeForm');
+composeForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(composeForm);
+  const r = await fetch('/compose', { method: 'POST', body: fd });
+  const j = await r.json();
+  document.getElementById('draft').textContent = j.text || '(no draft)';
+});
+
+const sendForm = document.getElementById('sendForm');
+sendForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(sendForm);
+  const r = await fetch('/send-email', { method: 'POST', body: fd });
+  const j = await r.json();
+  document.getElementById('sendStatus').textContent = j.ok ? 'Sent!' : ('Error: ' + (j.error || j.status));
+});
+
+document.getElementById('addContact').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const r = await fetch('/contacts/add', { method: 'POST', body: fd });
+  const j = await r.json();
+  if (j.ok) location.reload();
+  else alert(j.error || 'Error');
+});
+</script>
+{% endblock %}
