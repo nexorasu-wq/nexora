@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_login
+itsdangerous
+python-dotenv
+openai
+requests
+gunicorn
