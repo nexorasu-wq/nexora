@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Welcome, {{email}}</h2>
+<p class="mb-4">Add your brand details. You can change later.</p>
+<form method="post" class="space-y-4 max-w-md">
+  <div><label>Brand name</label><input name="brand" class="border p-2 w-full" placeholder="Acme Co."></div>
+  <div><label>Logo URL</label><input name="logo_url" class="border p-2 w-full" placeholder="https://.../logo.png"></div>
+  <button class="px-4 py-2 bg-black text-white rounded">Finish</button>
+</form>
+<hr class="my-6">
+<h3 class="text-xl font-semibold mb-2">Install your chatbot</h3>
+<p>Paste this on your website just before <code>&lt;/body&gt;</code>:</p>
+<pre class="bg-slate-100 p-3 overflow-auto">&lt;script src="https://code.tidio.co/YOUR_WIDGET_ID.js" async&gt;&lt;/script&gt;</pre>
+{% endblock %}
