@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Login</h2>
+<form method="post" class="space-y-4 max-w-md">
+  <div><label>Email</label><input name="email" type="email" class="border p-2 w-full" required></div>
+  <button class="px-4 py-2 bg-black text-white rounded">Login</button>
+</form>
+{% if get_flashed_messages() %}
+  <p class="text-red-600 mt-4">{{ get_flashed_messages()[0] }}</p>
+{% endif %}
+{% endblock %}
